@@ -15,7 +15,7 @@ public:
     int M; // table size
     int N; // number of elements
     
-    explicit HashTableClosed(int size = 101)
+    explicit HashTableClosed(int size = 256)
         : M(size), N(0) {
         table.resize(M);
         occupied.assign(M, false);

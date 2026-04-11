@@ -4,6 +4,7 @@
 #include "LinearProbing.hpp"
 #include "QuadraticProbing.hpp"
 #include "DoubleHashing.hpp"
+#include <string>
 
 using namespace std;
 
@@ -33,7 +34,10 @@ int main() {
 
     vector<HashTableClosed<int>*> tables = {&linear, &quadratic, &doubleHash};
     vector<string> names = {"Linear Probing (skip=3)", "Quadratic Probing", "Double Hashing"};
-
+    double bestInsert = 100000000000000000;
+    double bestSearch = 100000000000000000;
+    string bestNameInsert = "";
+    string bestNameSearch = "";
     for (size_t t = 0; t < tables.size(); t++) {
         cout << "\n--- " << names[t] << " ---\n";
         int totalInsertProbes = 0;
@@ -43,6 +47,11 @@ int main() {
 
         cout << "Average probes (insert): " << fixed << setprecision(2)
              << static_cast<double>(totalInsertProbes) / N << "\n";
+        if (static_cast<double>(totalInsertProbes) / N < bestInsert)
+        {
+            bestInsert = static_cast<double>(totalInsertProbes) / N;
+            bestNameInsert = names[t];
+        }
 
         // Search first 10 keys (present) and 10 keys not in table
         int totalSearchProbes = 0;
@@ -58,10 +67,18 @@ int main() {
             auto [found2, probes2] = tables[t]->search(keyAbsent);
             totalSearchProbes += probes2;
         }
+        if (static_cast<double>(totalSearchProbes) / 20 < bestSearch)
+        {
+            bestSearch = static_cast<double>(totalSearchProbes) / 20 ;
+            bestNameSearch = names[t];
+        }
         cout << "Search hits (first 10 present keys): " << foundCount << "/10\n";
         cout << "Average probes (search): " << fixed << setprecision(2)
              << static_cast<double>(totalSearchProbes) / 20 << "\n";
     }
+    
+    cout << "The best in inserting is " << bestNameInsert << " with " << bestInsert <<"\n";
+    cout << "The best in searching is " << bestNameSearch << " with " << bestSearch <<"\n";
 
     return 0;
 }
